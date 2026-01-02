@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-poke-dark text-white font-sans;
+  margin: 0;
+  padding: 0;
+}
