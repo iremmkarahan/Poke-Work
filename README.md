@@ -1,4 +1,4 @@
-# Poke-Work-Evolution 🚀
+# Poke-Work
 
 Welcome to your gamified productivity tracker! This project is designed to help you learn Java, JDBC, and architecture fundamentals.
 
