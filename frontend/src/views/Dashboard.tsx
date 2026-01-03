@@ -1,8 +1,56 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '../api'
 
-export function Dashboard() {
-    const [level] = useState(5)
-    const [xp] = useState(400)
+interface DashboardData {
+    trainerName: string;
+    pokemonName: string;
+    level: number;
+    currentXp: number;
+    totalXp: number;
+    evolutionStage: string;
+    role: string;
+}
+
+interface DashboardProps {
+    onDataLoaded?: (data: DashboardData) => void;
+}
+
+export function Dashboard({ onDataLoaded }: DashboardProps) {
+    const [data, setData] = useState<DashboardData | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.getDashboard()
+            .then(data => {
+                setData(data);
+                if (onDataLoaded) onDataLoaded(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                if (err.message === "AUTH_ERROR") {
+                    window.dispatchEvent(new Event('auth-expired'));
+                }
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) return <div className="p-8 text-white">Loading data from backend...</div>
+
+    if (!data) {
+        return (
+            <div className="p-8 text-white flex flex-col items-center justify-center min-h-[50vh]">
+                <div className="text-4xl mb-4">⚠️</div>
+                <div className="text-xl mb-4 text-center">Error loading dashboard. Ensure backend is running!</div>
+                <button
+                    onClick={() => window.dispatchEvent(new Event('auth-expired'))}
+                    className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                    Clear Session & Return to Register
+                </button>
+            </div>
+        )
+    }
 
     return (
         <div className="p-8">
@@ -16,10 +64,15 @@ export function Dashboard() {
                         🔥
                     </div>
                     <div>
-                        <div className="font-bold text-lg">Trainer Alex</div>
-                        <div className="text-xs text-slate-400">Level {level} • {xp}/1000 XP</div>
+                        <div className="font-bold text-lg">Trainer {data.trainerName}</div>
+                        <div className="text-xs text-slate-400">
+                            {data.pokemonName} (Lvl {data.level})
+                        </div>
+                        <div className="text-xs text-slate-500 mt-1">
+                            {data.currentXp} / 100 XP to next level
+                        </div>
                         <div className="w-32 h-2 bg-slate-700 rounded-full mt-1 overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-yellow-400 to-orange-500" style={{ width: '40%' }}></div>
+                            <div className="h-full bg-gradient-to-r from-yellow-400 to-orange-500" style={{ width: `${Math.min(data.currentXp, 100)}%` }}></div>
                         </div>
                     </div>
                 </div>
@@ -27,23 +80,21 @@ export function Dashboard() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <StatCard title="Work Hours" value="42h" subtext="Total this week" color="text-cyan-400" />
-                <StatCard title="Avg. Daily" value="6h" subtext="+12% vs last week" color="text-purple-400" />
-                <StatCard title="Goal Progress" value="84%" subtext="Almost there!" color="text-green-400" />
+                <StatCard title="Total XP" value={`${data.totalXp}`} subtext="Lifetime Earnings" color="text-cyan-400" />
+                <StatCard title="Evolution" value={data.evolutionStage} subtext="Current Form" color="text-purple-400" />
+                <StatCard title="Status" value="Active" subtext=" Ready for work!" color="text-green-400" />
             </div>
 
             {/* Large Graph Area */}
             <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl h-64 flex items-center justify-center text-slate-500">
-                [Interactive Graph Component Placeholder]
+                [Graph: XP Over Time]
             </div>
 
             {/* Recent Activity */}
             <div className="mt-8">
                 <h3 className="text-xl font-bold mb-4">Recent Activity</h3>
                 <div className="space-y-3">
-                    <ActivityItem icon="✅" text="Completed 'Project Alpha' task (+50 XP)" time="2h ago" />
-                    <ActivityItem icon="🕒" text="Logged 2h of deep work (+20 XP)" time="4h ago" />
-                    <ActivityItem icon="🏆" text="Earned 'Early Bird' Badge (+100 XP)" time="6h ago" />
+                    <ActivityItem icon="✅" text="Database synced!" time="Just now" />
                 </div>
             </div>
         </div>
