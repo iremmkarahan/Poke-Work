@@ -10,7 +10,7 @@ interface SidebarProps {
     userRole?: string;
 }
 
-export function Sidebar({ currentView, setCurrentView, isOpen, setIsOpen, userRole }: SidebarProps) {
+export function Sidebar({ currentView, setCurrentView, isOpen, setIsOpen, onLogout, userRole }: SidebarProps) {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: '📊' },
         { id: 'tasks', label: 'Tasks', icon: '⚔️' },
@@ -35,24 +35,33 @@ export function Sidebar({ currentView, setCurrentView, isOpen, setIsOpen, userRo
                 </button>
             </div>
 
-            <nav className="mt-4 space-y-2 px-4">
-                {menuItems.map(item => (
-                    <button
-                        key={item.id}
-                        onClick={() => setCurrentView(item.id)}
-                        className={`w-full flex items-center space-x-4 p-3 rounded-xl transition-all ${currentView === item.id
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-                            : 'text-slate-400 hover:bg-slate-700 hover:text-white'
-                            }`}
-                    >
-                        <span className="text-xl">{item.icon}</span>
-                        {isOpen && <span className="font-medium">{item.label}</span>}
-                    </button>
-                ))}
-            </nav>
+            <div className="flex flex-col h-[calc(100%-100px)]">
+                <nav className="mt-4 space-y-2 px-4 flex-1">
+                    {menuItems.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => setCurrentView(item.id)}
+                            className={`w-full flex items-center space-x-4 p-3 rounded-xl transition-all ${currentView === item.id
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
+                                : 'text-slate-400 hover:bg-slate-700 hover:text-white'
+                                }`}
+                        >
+                            <span className="text-xl">{item.icon}</span>
+                            {isOpen && <span className="font-medium">{item.label}</span>}
+                        </button>
+                    ))}
+                </nav>
 
-            <div className="absolute bottom-8 left-0 w-full px-6">
-                {isOpen && <div className="text-xs text-slate-500 text-center">v1.0.0 Alpha</div>}
+                <div className="mt-auto px-4 mb-4">
+                    <button
+                        onClick={onLogout}
+                        className="w-full flex items-center space-x-4 p-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"
+                    >
+                        <span className="text-xl">🚪</span>
+                        {isOpen && <span className="font-medium">Logout</span>}
+                    </button>
+                    {isOpen && <div className="mt-4 text-[10px] text-slate-500 text-center uppercase tracking-widest opacity-50">v1.0.0 Alpha</div>}
+                </div>
             </div>
         </aside>
     );

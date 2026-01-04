@@ -25,10 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        // For MVP, we'll just check if user exists.
-        // Real implementation would involve AuthenticationManager and JWT generation.
-        // Returning a dummy token for now.
-        return ResponseEntity.ok("dummy-jwt-token-xyz");
+    public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+        User user = authService.verifyLogin(request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(user);
     }
 }

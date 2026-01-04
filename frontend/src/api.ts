@@ -1,6 +1,5 @@
 export const API_BASE = "http://localhost:8080/api";
 
-type AuthResponse = string; // JWT token (mock for now)
 
 export const api = {
     // Authentication
@@ -14,14 +13,14 @@ export const api = {
         return res.json();
     },
 
-    async login(username: string, password: string): Promise<AuthResponse> {
+    async login(username: string, password: string): Promise<any> {
         const res = await fetch(`${API_BASE}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
         if (!res.ok) throw new Error("Login failed");
-        return res.text(); // Returns raw string token
+        return res.json();
     },
 
     // Data Fetching

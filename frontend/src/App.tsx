@@ -5,7 +5,7 @@ import { Dashboard } from './views/Dashboard'
 import { Tasks } from './views/Tasks'
 import { Goals } from './views/Goals'
 import { Achievements } from './views/Achievements'
-import { Register } from './views/Register'
+import { Auth } from './views/Auth'
 import { AdminDashboard } from './views/AdminDashboard'
 
 export default function App() {
@@ -28,9 +28,9 @@ export default function App() {
     return () => window.removeEventListener('auth-expired', handleAuthError);
   }, []);
 
-  // If not registered/logged in, show Register screen
+  // If not registered/logged in, show Auth screen
   if (!registered) {
-    return <Register onRegisterSuccess={() => setRegistered(true)} />
+    return <Auth onAuthSuccess={() => setRegistered(true)} />
   }
 
   const renderView = () => {

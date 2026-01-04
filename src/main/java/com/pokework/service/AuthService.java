@@ -48,4 +48,15 @@ public class AuthService {
 
         return user;
     }
+
+    public User verifyLogin(String username, String password) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid username or password");
+        }
+
+        return user;
+    }
 }
