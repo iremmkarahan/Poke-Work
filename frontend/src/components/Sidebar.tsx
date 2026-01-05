@@ -16,6 +16,7 @@ export function Sidebar({ currentView, setCurrentView, isOpen, setIsOpen, onLogo
         { id: 'tasks', label: 'Tasks', icon: '⚔️' },
         { id: 'goals', label: 'Goals', icon: '🎯' },
         { id: 'achievements', label: 'Achievements', icon: '🏆' },
+        { id: 'profile', label: 'Profile', icon: '👤' },
         { id: 'admin', label: 'Admin Panel', icon: '⚡', adminOnly: true },
     ].filter(item => !item.adminOnly || userRole === 'ADMIN');
 

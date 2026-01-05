@@ -7,6 +7,7 @@ import { Goals } from './views/Goals'
 import { Achievements } from './views/Achievements'
 import { Auth } from './views/Auth'
 import { AdminDashboard } from './views/AdminDashboard'
+import { Profile } from './views/Profile'
 
 export default function App() {
   const [currentView, setCurrentView] = useState('dashboard')
@@ -39,6 +40,7 @@ export default function App() {
       case 'tasks': return <Tasks />
       case 'goals': return <Goals />
       case 'achievements': return <Achievements />
+      case 'profile': return <Profile />
       case 'admin': return <AdminDashboard />
       default: return <Dashboard onDataLoaded={(data) => setUserRole(data.role)} />
     }

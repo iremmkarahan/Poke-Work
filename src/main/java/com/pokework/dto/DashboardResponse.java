@@ -8,10 +8,12 @@ public class DashboardResponse {
     private int totalXp;
     private String evolutionStage;
     private String role;
+    private String status;
+    private String profilePictureUrl;
 
     // Constructors
     public DashboardResponse(String trainerName, String pokemonName, int level, int currentXp, int totalXp,
-            String evolutionStage, String role) {
+            String evolutionStage, String role, String status, String profilePictureUrl) {
         this.trainerName = trainerName;
         this.pokemonName = pokemonName;
         this.level = level;
@@ -19,6 +21,8 @@ public class DashboardResponse {
         this.totalXp = totalXp;
         this.evolutionStage = evolutionStage;
         this.role = role;
+        this.status = status;
+        this.profilePictureUrl = profilePictureUrl;
     }
 
     // Getters
@@ -48,5 +52,13 @@ public class DashboardResponse {
 
     public String getRole() {
         return role;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
     }
 }

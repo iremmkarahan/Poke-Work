@@ -1,5 +1,17 @@
 export const API_BASE = "http://localhost:8080/api";
 
+export interface DashboardData {
+    trainerName: string;
+    pokemonName: string;
+    level: number;
+    currentXp: number;
+    totalXp: number;
+    evolutionStage: string;
+    role: string;
+    status: string;
+    profilePictureUrl: string | null;
+}
+
 
 export const api = {
     // Authentication
@@ -75,5 +87,77 @@ export const api = {
         });
         if (!res.ok) throw new Error("Failed to delete user");
         return true;
+    },
+
+    // Quests
+    async getQuests() {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/quests`, {
+            headers: { 'Authorization': authHeader || '' }
+        });
+        if (!res.ok) throw new Error("Failed to fetch quests");
+        return res.json();
+    },
+
+    async createQuest(title: string, earnedXp: number, difficulty: string) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/quests`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader || ''
+            },
+            body: JSON.stringify({ title, earnedXp, difficulty })
+        });
+        if (!res.ok) throw new Error("Failed to create quest");
+        return res.json();
+    },
+
+    async finishQuest(id: number, hours: number) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/quests/${id}/finish?hours=${hours}`, {
+            method: 'POST',
+            headers: { 'Authorization': authHeader || '' }
+        });
+        if (!res.ok) throw new Error("Failed to finish quest");
+        return res.json();
+    },
+
+    async deleteQuest(id: number) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/quests/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': authHeader || '' }
+        });
+        if (!res.ok) throw new Error("Failed to delete quest");
+        return true;
+    },
+
+    async updateUserStatus(status: string) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/dashboard/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader || ''
+            },
+            body: JSON.stringify(status)
+        });
+        if (!res.ok) throw new Error("Failed to update status");
+        return res.json();
+    },
+
+    async updateProfile(username: string, profilePictureUrl: string) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/dashboard/profile`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader || ''
+            },
+            body: JSON.stringify({ username, profilePictureUrl })
+        });
+        if (!res.ok) throw new Error("Failed to update profile");
+        return res.json();
     }
 }

@@ -1,11 +1,15 @@
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/config/DataInitializer.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/repository/PokemonRepository.java
+/Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/service/QuestService.java
+/Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/model/Quest.java
+/Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/repository/QuestRepository.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/dto/DashboardResponse.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/controller/DashboardController.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/config/SecurityConfig.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/dto/RegisterRequest.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/PokeWorkApplication.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/service/UserDetailsServiceImpl.java
+/Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/controller/QuestController.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/model/User.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/controller/AuthController.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/dto/LoginRequest.java

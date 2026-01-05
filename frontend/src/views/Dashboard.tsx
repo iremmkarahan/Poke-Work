@@ -9,7 +9,11 @@ interface DashboardData {
     totalXp: number;
     evolutionStage: string;
     role: string;
+    status: string;
+    profilePictureUrl: string | null;
 }
+
+const STATUSES = ["Ready to Work", "Focusing", "Resting", "On a Break", "Stuck"];
 
 interface DashboardProps {
     onDataLoaded?: (data: DashboardData) => void;
@@ -35,6 +39,20 @@ export function Dashboard({ onDataLoaded }: DashboardProps) {
             });
     }, []);
 
+    const handleStatusChange = async () => {
+        if (!data) return;
+        const currentIndex = STATUSES.indexOf(data.status);
+        const nextIndex = (currentIndex + 1) % STATUSES.length;
+        const nextStatus = STATUSES[nextIndex];
+
+        try {
+            const res = await api.updateUserStatus(nextStatus);
+            setData({ ...data, status: res.status });
+        } catch (error) {
+            alert("Failed to update status");
+        }
+    };
+
     if (loading) return <div className="p-8 text-white">Loading data from backend...</div>
 
     if (!data) {
@@ -59,9 +77,13 @@ export function Dashboard({ onDataLoaded }: DashboardProps) {
                 <h2 className="text-3xl font-bold">Dashboard</h2>
 
                 {/* User Card */}
-                <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center space-x-4 shadow-lg">
-                    <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-2xl border-2 border-yellow-400 animate-pulse">
-                        🔥
+                <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center space-x-4 shadow-lg pr-8">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-poke-accent shadow-lg bg-slate-700 flex items-center justify-center">
+                        {data.profilePictureUrl ? (
+                            <img src={data.profilePictureUrl} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="text-2xl">👤</div>
+                        )}
                     </div>
                     <div>
                         <div className="font-bold text-lg">Trainer {data.trainerName}</div>
@@ -82,7 +104,20 @@ export function Dashboard({ onDataLoaded }: DashboardProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <StatCard title="Total XP" value={`${data.totalXp}`} subtext="Lifetime Earnings" color="text-cyan-400" />
                 <StatCard title="Evolution" value={data.evolutionStage} subtext="Current Form" color="text-purple-400" />
-                <StatCard title="Status" value="Active" subtext=" Ready for work!" color="text-green-400" />
+                <div
+                    onClick={handleStatusChange}
+                    className="cursor-pointer group relative"
+                >
+                    <StatCard
+                        title="Status"
+                        value={data.status}
+                        subtext="Click to change status"
+                        color={getStatusColor(data.status)}
+                    />
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-slate-500">
+                        🔄
+                    </div>
+                </div>
             </div>
 
             {/* Large Graph Area */}
@@ -109,6 +144,17 @@ function StatCard({ title, value, subtext, color }: { title: string, value: stri
             <div className="text-xs text-slate-500">{subtext}</div>
         </div>
     )
+}
+
+function getStatusColor(status: string) {
+    switch (status) {
+        case 'Ready to Work': return 'text-green-400';
+        case 'Focusing': return 'text-poke-accent';
+        case 'Resting': return 'text-purple-400';
+        case 'On a Break': return 'text-yellow-400';
+        case 'Stuck': return 'text-red-400';
+        default: return 'text-slate-400';
+    }
 }
 
 function ActivityItem({ icon, text, time }: { icon: string, text: string, time: string }) {

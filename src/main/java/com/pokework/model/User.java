@@ -1,6 +1,7 @@
 package com.pokework.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
@@ -20,9 +21,16 @@ public class User {
     @Column(nullable = false)
     private String role; // "USER" or "ADMIN"
 
+    @Column(nullable = false)
+    private String status = "Ready to Work";
+
+    private String profilePictureUrl;
+
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Pokemon pokemon;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<WorkSession> workSessions;
 
@@ -67,6 +75,22 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 
     public Pokemon getPokemon() {
