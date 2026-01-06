@@ -141,7 +141,7 @@ export const api = {
                 'Content-Type': 'application/json',
                 'Authorization': authHeader || ''
             },
-            body: JSON.stringify(status)
+            body: JSON.stringify({ status })
         });
         if (!res.ok) throw new Error("Failed to update status");
         return res.json();

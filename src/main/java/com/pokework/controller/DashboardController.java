@@ -10,11 +10,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {
 
+    private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
     private final UserRepository userRepository;
 
     public DashboardController(UserRepository userRepository) {
@@ -51,30 +55,44 @@ public class DashboardController {
     }
 
     @PutMapping("/status")
-    public ResponseEntity<java.util.Map<String, String>> updateStatus(
-            @org.springframework.web.bind.annotation.RequestBody String status) {
+    public ResponseEntity<Map<String, String>> updateStatus(
+            @org.springframework.web.bind.annotation.RequestBody Map<String, String> statusData) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        logger.info("Updating status for user: {}", username);
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setStatus(status.replace("\"", ""));
+        String newStatus = statusData.get("status");
+        if (newStatus == null) {
+            logger.error("Status value missing in request for user: {}", username);
+            return ResponseEntity.badRequest().build();
+        }
+
+        user.setStatus(newStatus);
         userRepository.save(user);
-        return ResponseEntity.ok(java.util.Map.of("status", user.getStatus()));
+        logger.info("Status updated to '{}' for user: {}", newStatus, username);
+
+        return ResponseEntity.ok(Map.of("status", user.getStatus()));
     }
 
     @PutMapping("/profile")
     @SuppressWarnings("null")
     public ResponseEntity<DashboardResponse> updateProfile(
-            @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> profileData) {
+            @org.springframework.web.bind.annotation.RequestBody Map<String, String> profileData) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        logger.info("Updating profile for user: {}", username);
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (profileData.containsKey("username")) {
             user.setUsername(profileData.get("username"));
+            logger.info("Username changed to '{}' for user: {}", profileData.get("username"), username);
         }
         if (profileData.containsKey("profilePictureUrl")) {
             user.setProfilePictureUrl(profileData.get("profilePictureUrl"));
+            logger.info("Profile picture URL updated for user: {}", username);
         }
 
         userRepository.save(user);

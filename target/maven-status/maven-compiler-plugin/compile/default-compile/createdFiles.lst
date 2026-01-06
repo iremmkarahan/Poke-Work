@@ -3,11 +3,13 @@ com/pokework/dto/WorkRequest.class
 com/pokework/dto/LoginRequest.class
 com/pokework/service/UserDetailsServiceImpl.class
 com/pokework/model/Pokemon.class
+com/pokework/service/QuestService.class
 com/pokework/config/DataInitializer.class
 com/pokework/service/AuthService.class
 com/pokework/repository/PokemonRepository.class
 com/pokework/config/SecurityConfig.class
 com/pokework/service/WorkService.class
+com/pokework/model/Quest.class
 com/pokework/model/WorkSession.class
 com/pokework/controller/DashboardController.class
 com/pokework/dto/RegisterRequest.class
@@ -15,6 +17,9 @@ com/pokework/model/User.class
 com/pokework/repository/WorkSessionRepository.class
 com/pokework/dto/DashboardResponse.class
 com/pokework/controller/AdminController.class
+com/pokework/repository/QuestRepository.class
+com/pokework/controller/QuestController.class
+com/pokework/exception/GlobalExceptionHandler.class
 com/pokework/repository/UserRepository.class
 com/pokework/PokeWorkApplication.class
 com/pokework/controller/WorkController.class

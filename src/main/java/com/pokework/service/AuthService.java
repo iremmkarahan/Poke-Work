@@ -29,6 +29,12 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
+        if (request.getPassword() == null || request.getPassword().length() < 8 ||
+                !request.getPassword().matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+            throw new RuntimeException(
+                    "Password must be at least 8 characters long and contain at least one special character");
+        }
+
         // 1. Create and Save User
         User user = new User();
         user.setUsername(request.getUsername());

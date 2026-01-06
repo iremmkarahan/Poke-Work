@@ -19,7 +19,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
-        // TODO: Validate password length, etc.
         User newUser = authService.register(request);
         return ResponseEntity.ok(newUser);
     }
