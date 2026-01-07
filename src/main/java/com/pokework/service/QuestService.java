@@ -8,6 +8,8 @@ import com.pokework.repository.QuestRepository;
 import com.pokework.repository.UserRepository;
 import com.pokework.repository.WorkSessionRepository;
 import com.pokework.repository.PokemonRepository;
+import com.pokework.repository.GoalRepository;
+import com.pokework.model.Goal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +18,21 @@ import java.util.List;
 
 @Service
 public class QuestService {
-
     private final QuestRepository questRepository;
     private final UserRepository userRepository;
     private final WorkSessionRepository workSessionRepository;
     private final PokemonRepository pokemonRepository;
 
+    private final GoalRepository goalRepository;
+
     public QuestService(QuestRepository questRepository, UserRepository userRepository,
-            WorkSessionRepository workSessionRepository, PokemonRepository pokemonRepository) {
+            WorkSessionRepository workSessionRepository, PokemonRepository pokemonRepository,
+            GoalRepository goalRepository) {
         this.questRepository = questRepository;
         this.userRepository = userRepository;
         this.workSessionRepository = workSessionRepository;
         this.pokemonRepository = pokemonRepository;
+        this.goalRepository = goalRepository;
     }
 
     public List<Quest> getMyQuests() {
@@ -62,8 +67,11 @@ public class QuestService {
             throw new RuntimeException("Quest already completed");
         }
 
-        // 1. Calculate XP
+        // 1. Calculate XP (Minimum 1 XP if hours > 0)
         int earnedXp = (int) (hours * 10);
+        if (earnedXp == 0 && hours > 0)
+            earnedXp = 1;
+
         quest.setEarnedXp(earnedXp);
         quest.setCompleted(true);
 
@@ -72,7 +80,7 @@ public class QuestService {
         WorkSession session = new WorkSession(user, java.time.LocalDate.now(), hours);
         workSessionRepository.save(session);
 
-        // 3. Add XP to Pokemon
+        // 3. Add XP to Pokemon (with safety check)
         Pokemon p = user.getPokemon();
         if (p != null) {
             p.setCurrentXp(p.getCurrentXp() + earnedXp);
@@ -85,6 +93,15 @@ public class QuestService {
             pokemonRepository.save(p);
         }
 
+        // 4. Goal Integration: Update all goals tracking 'hours' (case-insensitive)
+        List<Goal> userGoals = goalRepository.findByUser(user);
+        for (Goal goal : userGoals) {
+            if (goal.getUnit() != null && goal.getUnit().equalsIgnoreCase("hours")) {
+                goal.setCurrentValue(goal.getCurrentValue() + hours);
+                goalRepository.save(goal);
+            }
+        }
+
         return questRepository.save(quest);
     }
 
@@ -93,7 +110,7 @@ public class QuestService {
         if (questId == null)
             throw new IllegalArgumentException("Quest ID cannot be null");
         Quest quest = questRepository.findById(questId)
-                .orElseThrow(() -> new RuntimeException("Quest found"));
+                .orElseThrow(() -> new RuntimeException("Quest not found"));
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!quest.getUser().getUsername().equals(username)) {

@@ -12,6 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -56,8 +57,8 @@ class PokeWorkApplicationTests {
                 "role", "USER");
 
         mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(regRequest)))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(regRequest))))
                 .andExpect(status().isOk());
     }
 
@@ -70,10 +71,10 @@ class PokeWorkApplicationTests {
                 "role", "USER");
 
         mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(regRequest)))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(regRequest))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username", is("testuser")));
+                .andExpect(jsonPath("$.username", Objects.requireNonNull(is("testuser"))));
 
         // 2. Register with short password (Fail)
         Map<String, String> shortPwRequest = Map.of(
@@ -82,10 +83,10 @@ class PokeWorkApplicationTests {
                 "role", "USER");
 
         mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(shortPwRequest)))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(shortPwRequest))))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", containsString("at least 8 characters")));
+                .andExpect(jsonPath("$.error", Objects.requireNonNull(containsString("at least 8 characters"))));
 
         // 3. Login
         Map<String, String> loginRequest = Map.of(
@@ -93,10 +94,10 @@ class PokeWorkApplicationTests {
                 "password", "Password123!");
 
         mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username", is("testuser")));
+                .andExpect(jsonPath("$.username", Objects.requireNonNull(is("testuser"))));
     }
 
     @Test
@@ -107,26 +108,26 @@ class PokeWorkApplicationTests {
         // 1. Get Dashboard
         mockMvc.perform(get("/api/dashboard"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.trainerName", is("testuser")))
-                .andExpect(jsonPath("$.status", is("Ready to Work")));
+                .andExpect(jsonPath("$.trainerName", Objects.requireNonNull(is("testuser"))))
+                .andExpect(jsonPath("$.status", Objects.requireNonNull(is("Ready to Work"))));
 
         // 2. Update Status
         Map<String, String> statusUpdate = Map.of("status", "Focusing");
         mockMvc.perform(put("/api/dashboard/status")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(statusUpdate)))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(statusUpdate))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("Focusing")));
+                .andExpect(jsonPath("$.status", Objects.requireNonNull(is("Focusing"))));
 
         // 3. Update Profile (Keep username same to avoid session issues in test)
         Map<String, String> profileUpdate = Map.of(
                 "username", "testuser",
                 "profilePictureUrl", "http://example.com/pic.png");
         mockMvc.perform(put("/api/dashboard/profile")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profileUpdate)))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(profileUpdate))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.profilePictureUrl", is("http://example.com/pic.png")));
+                .andExpect(jsonPath("$.profilePictureUrl", Objects.requireNonNull(is("http://example.com/pic.png"))));
     }
 
     @Test
@@ -140,15 +141,15 @@ class PokeWorkApplicationTests {
                 "difficulty", "Easy");
 
         mockMvc.perform(post("/api/quests")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(questRequest)))
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(questRequest))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title", is("Kill 10 Rats")));
+                .andExpect(jsonPath("$.title", Objects.requireNonNull(is("Kill 10 Rats"))));
 
         // 2. List Quests
         mockMvc.perform(get("/api/quests"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title", is("Kill 10 Rats")));
+                .andExpect(jsonPath("$", Objects.requireNonNull(hasSize(1))))
+                .andExpect(jsonPath("$[0].title", Objects.requireNonNull(is("Kill 10 Rats"))));
     }
 }

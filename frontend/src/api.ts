@@ -21,7 +21,10 @@ export const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
-        if (!res.ok) throw new Error("Registration failed");
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({ error: "Registration failed" }));
+            throw new Error(data.error || "Registration failed");
+        }
         return res.json();
     },
 
@@ -31,7 +34,10 @@ export const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
-        if (!res.ok) throw new Error("Login failed");
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({ error: "Login failed" }));
+            throw new Error(data.error || "Login failed");
+        }
         return res.json();
     },
 
@@ -119,7 +125,10 @@ export const api = {
             method: 'POST',
             headers: { 'Authorization': authHeader || '' }
         });
-        if (!res.ok) throw new Error("Failed to finish quest");
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({ error: "Failed to finish quest" }));
+            throw new Error(data.error || "Failed to finish quest");
+        }
         return res.json();
     },
 
@@ -159,5 +168,53 @@ export const api = {
         });
         if (!res.ok) throw new Error("Failed to update profile");
         return res.json();
+    },
+
+    // Goals
+    async getGoals() {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/goals`, {
+            headers: { 'Authorization': authHeader || '' }
+        });
+        if (!res.ok) throw new Error("Failed to fetch goals");
+        return res.json();
+    },
+
+    async createGoal(title: string, targetValue: number, unit: string, color: string) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/goals`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader || ''
+            },
+            body: JSON.stringify({ title, targetValue, currentValue: 0, unit, color })
+        });
+        if (!res.ok) throw new Error("Failed to create goal");
+        return res.json();
+    },
+
+    async updateGoal(id: number, goal: any) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/goals/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader || ''
+            },
+            body: JSON.stringify(goal)
+        });
+        if (!res.ok) throw new Error("Failed to update goal");
+        return res.json();
+    },
+
+    async deleteGoal(id: number) {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/goals/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': authHeader || '' }
+        });
+        if (!res.ok) throw new Error("Failed to delete goal");
+        return true;
     }
 }

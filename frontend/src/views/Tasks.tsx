@@ -15,6 +15,7 @@ export function Tasks() {
     const [newTitle, setNewTitle] = useState('');
     const [newDifficulty, setNewDifficulty] = useState('Medium');
     const [loading, setLoading] = useState(true);
+    const [finishing, setFinishing] = useState(false);
 
     // Timer State
     const [activeQuestId, setActiveQuestId] = useState<number | null>(null);
@@ -55,6 +56,19 @@ export function Tasks() {
         }
     };
 
+    // Keep activeQuestId in sync with server data
+    useEffect(() => {
+        if (activeQuestId && quests.length > 0) {
+            const currentQuest = quests.find(q => q.id === activeQuestId);
+            if (!currentQuest || currentQuest.completed) {
+                console.log("Syncing active quest: clear completed/missing quest", activeQuestId);
+                setActiveQuestId(null);
+                setStartTime(null);
+                localStorage.removeItem('activeQuest');
+            }
+        }
+    }, [quests, activeQuestId]);
+
     const handleAddQuest = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -75,19 +89,30 @@ export function Tasks() {
     };
 
     const handleFinishQuest = async (id: number) => {
-        if (!startTime) return;
+        if (!startTime || finishing) return;
 
         const durationSeconds = (Date.now() - startTime) / 1000;
         const durationHours = durationSeconds / 3600;
 
+        setFinishing(true);
         try {
             await api.finishQuest(id, durationHours);
             setActiveQuestId(null);
             setStartTime(null);
             localStorage.removeItem('activeQuest');
             fetchQuests();
-        } catch (error) {
-            alert("Failed to finish quest");
+        } catch (error: any) {
+            if (error.message && error.message.includes("already completed")) {
+                // Treat as success if already completed
+                setActiveQuestId(null);
+                setStartTime(null);
+                localStorage.removeItem('activeQuest');
+                fetchQuests();
+            } else {
+                alert(error.message || "Failed to finish quest");
+            }
+        } finally {
+            setFinishing(false);
         }
     };
 
@@ -157,9 +182,11 @@ export function Tasks() {
 
                             <button
                                 onClick={() => handleFinishQuest(activeQuestId)}
-                                className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg hover:shadow-green-500/30 flex items-center gap-2"
+                                disabled={finishing}
+                                className={`${finishing ? 'bg-slate-600 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'} text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg hover:shadow-green-500/30 flex items-center gap-2`}
                             >
-                                <span className="text-xl">🏁</span> Finish Quest
+                                <span className="text-xl">{finishing ? '⏳' : '🏁'}</span>
+                                {finishing ? 'Finishing...' : 'Finish Quest'}
                             </button>
                         </div>
                     </div>

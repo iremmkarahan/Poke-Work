@@ -1,9 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 body {
-  @apply bg-poke-dark text-white font-sans;
+  background-color: #0f172a;
+  color: #ffffff;
+  font-family: ui-sans-serif, system-ui, sans-serif;
   margin: 0;
   padding: 0;
 }

@@ -26,7 +26,7 @@ export function Auth({ onAuthSuccess }: { onAuthSuccess: () => void }) {
 
             onAuthSuccess();
         } catch (err: any) {
-            setError(isLogin ? 'Login failed. Check your credentials.' : 'Registration failed. Username might be taken.');
+            setError(err.message || (isLogin ? 'Login failed' : 'Registration failed'));
         } finally {
             setLoading(false);
         }

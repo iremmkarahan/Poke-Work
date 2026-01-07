@@ -36,6 +36,9 @@ public class AdminController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

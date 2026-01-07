@@ -22,6 +22,7 @@ public class Quest {
     @Column(nullable = false)
     private boolean completed = false;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
