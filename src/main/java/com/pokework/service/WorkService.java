@@ -7,6 +7,8 @@ import com.pokework.model.WorkSession;
 import com.pokework.repository.PokemonRepository;
 import com.pokework.repository.UserRepository;
 import com.pokework.repository.WorkSessionRepository;
+import com.pokework.repository.GoalRepository;
+import com.pokework.model.Goal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +22,14 @@ public class WorkService {
     private final WorkSessionRepository workSessionRepository;
     private final PokemonRepository pokemonRepository;
     private final UserRepository userRepository;
+    private final GoalRepository goalRepository;
 
     public WorkService(WorkSessionRepository workSessionRepository, PokemonRepository pokemonRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository, GoalRepository goalRepository) {
         this.workSessionRepository = workSessionRepository;
         this.pokemonRepository = pokemonRepository;
         this.userRepository = userRepository;
+        this.goalRepository = goalRepository;
     }
 
     public List<WorkSession> getMySessions() {
@@ -43,7 +47,8 @@ public class WorkService {
 
         // 1. Save Session
         WorkSession session = new WorkSession(user, request.getDate() != null ? request.getDate() : LocalDate.now(),
-                request.getHours());
+                request.getHours(),
+                request.getStartTime() != null ? request.getStartTime() : java.time.LocalTime.now());
         workSessionRepository.save(session);
 
         // 2. Add XP to Pokemon
@@ -60,6 +65,15 @@ public class WorkService {
             }
 
             pokemonRepository.save(p);
+        }
+
+        // 3. Goal Integration: Update all goals tracking 'hours' (case-insensitive)
+        List<Goal> userGoals = goalRepository.findByUser(user);
+        for (Goal goal : userGoals) {
+            if (goal.getUnit() != null && goal.getUnit().equalsIgnoreCase("hours")) {
+                goal.setCurrentValue(goal.getCurrentValue() + request.getHours());
+                goalRepository.save(goal);
+            }
         }
 
         return session;

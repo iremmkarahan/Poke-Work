@@ -48,6 +48,18 @@ public class QuestService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         quest.setUser(user);
+
+        if (quest.getGoal() != null && quest.getGoal().getId() != null) {
+            Goal goal = goalRepository.findById(quest.getGoal().getId())
+                    .orElseThrow(() -> new RuntimeException("Goal not found"));
+            if (!goal.getUser().getUsername().equals(username)) {
+                throw new RuntimeException("Unauthorized goal");
+            }
+            quest.setGoal(goal);
+        } else {
+            quest.setGoal(null); // Ensure it's null if no ID provided
+        }
+
         return questRepository.save(quest);
     }
 
@@ -77,7 +89,8 @@ public class QuestService {
 
         // 2. Log Work Session
         User user = quest.getUser();
-        WorkSession session = new WorkSession(user, java.time.LocalDate.now(), hours);
+        java.time.LocalTime startTime = java.time.LocalTime.now().minusMinutes((long) (hours * 60));
+        WorkSession session = new WorkSession(user, java.time.LocalDate.now(), hours, startTime);
         workSessionRepository.save(session);
 
         // 3. Add XP to Pokemon (with safety check)
@@ -93,12 +106,27 @@ public class QuestService {
             pokemonRepository.save(p);
         }
 
-        // 4. Goal Integration: Update all goals tracking 'hours' (case-insensitive)
-        List<Goal> userGoals = goalRepository.findByUser(user);
-        for (Goal goal : userGoals) {
-            if (goal.getUnit() != null && goal.getUnit().equalsIgnoreCase("hours")) {
-                goal.setCurrentValue(goal.getCurrentValue() + hours);
-                goalRepository.save(goal);
+        // 4. Goal Integration: Update progress
+        Goal associatedGoal = quest.getGoal();
+        if (associatedGoal != null) {
+            if ("hours".equalsIgnoreCase(associatedGoal.getUnit())) {
+                associatedGoal.setCurrentValue(associatedGoal.getCurrentValue() + hours);
+            } else if ("XP".equalsIgnoreCase(associatedGoal.getUnit())) {
+                associatedGoal.setCurrentValue(associatedGoal.getCurrentValue() + earnedXp);
+            } else {
+                // Default: increment by 1 (e.g. for "tasks", "percent" might need more logic
+                // but 1 is a safe increment)
+                associatedGoal.setCurrentValue(associatedGoal.getCurrentValue() + 1);
+            }
+            goalRepository.save(associatedGoal);
+        } else {
+            // Fallback: Update all goals tracking 'hours' (legacy behavior)
+            List<Goal> userGoals = goalRepository.findByUser(user);
+            for (Goal goal : userGoals) {
+                if (goal.getUnit() != null && goal.getUnit().equalsIgnoreCase("hours")) {
+                    goal.setCurrentValue(goal.getCurrentValue() + hours);
+                    goalRepository.save(goal);
+                }
             }
         }
 

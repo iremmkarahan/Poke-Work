@@ -105,15 +105,19 @@ export const api = {
         return res.json();
     },
 
-    async createQuest(title: string, earnedXp: number, difficulty: string) {
+    async createQuest(title: string, earnedXp: number, difficulty: string, goalId?: number) {
         const authHeader = localStorage.getItem('authHeader');
+        const body: any = { title, earnedXp, difficulty };
+        if (goalId) {
+            body.goal = { id: goalId };
+        }
         const res = await fetch(`${API_BASE}/quests`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': authHeader || ''
             },
-            body: JSON.stringify({ title, earnedXp, difficulty })
+            body: JSON.stringify(body)
         });
         if (!res.ok) throw new Error("Failed to create quest");
         return res.json();
@@ -216,5 +220,14 @@ export const api = {
         });
         if (!res.ok) throw new Error("Failed to delete goal");
         return true;
+    },
+
+    async getAchievements() {
+        const authHeader = localStorage.getItem('authHeader');
+        const res = await fetch(`${API_BASE}/achievements`, {
+            headers: { 'Authorization': authHeader || '' }
+        });
+        if (!res.ok) throw new Error("Failed to fetch achievements");
+        return res.json();
     }
 }

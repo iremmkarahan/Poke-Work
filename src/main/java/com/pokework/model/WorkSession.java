@@ -22,6 +22,8 @@ public class WorkSession {
     @Column(nullable = false)
     private double hours;
 
+    private java.time.LocalTime startTime;
+
     // Constructors
     public WorkSession() {
     }
@@ -30,6 +32,14 @@ public class WorkSession {
         this.user = user;
         this.workDate = workDate;
         this.hours = hours;
+        this.startTime = java.time.LocalTime.now();
+    }
+
+    public WorkSession(User user, LocalDate workDate, double hours, java.time.LocalTime startTime) {
+        this.user = user;
+        this.workDate = workDate;
+        this.hours = hours;
+        this.startTime = startTime;
     }
 
     // Getters and Setters
@@ -63,5 +73,13 @@ public class WorkSession {
 
     public void setHours(double hours) {
         this.hours = hours;
+    }
+
+    public java.time.LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(java.time.LocalTime startTime) {
+        this.startTime = startTime;
     }
 }

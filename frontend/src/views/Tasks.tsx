@@ -1,5 +1,16 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api';
+import {
+    Plus,
+    Play,
+    CheckCircle2,
+    Trash2,
+    RefreshCcw,
+    ArrowRight,
+    Timer,
+    AlertCircle,
+    ClipboardList
+} from 'lucide-react';
 
 interface Quest {
     id: number;
@@ -24,7 +35,6 @@ export function Tasks() {
 
     useEffect(() => {
         fetchQuests();
-        // Restore active timer from localStorage if exists
         const savedTimer = localStorage.getItem('activeQuest');
         if (savedTimer) {
             const { id, start } = JSON.parse(savedTimer);
@@ -56,12 +66,10 @@ export function Tasks() {
         }
     };
 
-    // Keep activeQuestId in sync with server data
     useEffect(() => {
         if (activeQuestId && quests.length > 0) {
             const currentQuest = quests.find(q => q.id === activeQuestId);
             if (!currentQuest || currentQuest.completed) {
-                console.log("Syncing active quest: clear completed/missing quest", activeQuestId);
                 setActiveQuestId(null);
                 setStartTime(null);
                 localStorage.removeItem('activeQuest');
@@ -103,7 +111,6 @@ export function Tasks() {
             fetchQuests();
         } catch (error: any) {
             if (error.message && error.message.includes("already completed")) {
-                // Treat as success if already completed
                 setActiveQuestId(null);
                 setStartTime(null);
                 localStorage.removeItem('activeQuest');
@@ -133,99 +140,138 @@ export function Tasks() {
 
 
     return (
-        <div className="p-8">
-            <h2 className="text-3xl font-bold mb-8">Adventure Board (Tasks)</h2>
+        <div className="space-y-8 pb-12">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Quest Board</h2>
+                    <p className="text-slate-500 font-medium">Manage your professional challenges and track focus time.</p>
+                </div>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-lg shadow-indigo-100 group"
+                >
+                    <Plus size={20} className="group-hover:rotate-90 transition-transform" />
+                    New Quest
+                </button>
+            </div>
 
-            <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-poke-accent">Active Quests</h3>
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="bg-poke-accent hover:bg-cyan-600 text-slate-900 font-bold py-2 px-4 rounded-lg transition-colors"
-                    >
-                        + New Quest
-                    </button>
+            {activeQuestId && (
+                <div className="bg-white p-8 rounded-[2rem] border-2 border-indigo-100 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full -translate-y-32 translate-x-32 -z-1" />
+                    <div className="flex-1 relative z-1">
+                        <div className="flex items-center gap-2 text-indigo-600 text-xs font-bold uppercase tracking-widest mb-3">
+                            <Timer size={14} />
+                            Quest in Progress
+                        </div>
+                        <h3 className="text-3xl font-black text-slate-900 leading-tight max-w-lg italic">
+                            {quests.find(q => q.id === activeQuestId)?.title}
+                        </h3>
+                    </div>
+
+                    <div className="flex items-center gap-10 relative z-1">
+                        <div className="fliqlo-container">
+                            <div className="fliqlo-group">
+                                <div className="fliqlo-card shadow-indigo-200">
+                                    {Math.floor(elapsedTime / 3600).toString().padStart(2, '0')}
+                                </div>
+                                <span className="fliqlo-label">HR</span>
+                            </div>
+                            <div className="text-2xl font-black text-slate-200 mt-[-1rem]">:</div>
+                            <div className="fliqlo-group">
+                                <div className="fliqlo-card shadow-indigo-200 text-indigo-100">
+                                    {Math.floor((elapsedTime % 3600) / 60).toString().padStart(2, '0')}
+                                </div>
+                                <span className="fliqlo-label">MIN</span>
+                            </div>
+                            <div className="text-2xl font-black text-slate-200 mt-[-1rem]">:</div>
+                            <div className="fliqlo-group">
+                                <div className="fliqlo-card shadow-indigo-200 text-indigo-400">
+                                    {(elapsedTime % 60).toString().padStart(2, '0')}
+                                </div>
+                                <span className="fliqlo-label">SEC</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => handleFinishQuest(activeQuestId)}
+                            disabled={finishing}
+                            className={`group relative overflow-hidden ${finishing ? 'bg-slate-100 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-bold py-5 px-10 rounded-2xl transition-all shadow-xl hover:shadow-indigo-200 flex items-center gap-3`}
+                        >
+                            {finishing ? (
+                                <RefreshCcw size={20} className="animate-spin" />
+                            ) : (
+                                <CheckCircle2 size={20} className="group-hover:scale-125 transition-transform" />
+                            )}
+                            <span className="text-lg tracking-tight">{finishing ? 'Finalizing...' : 'Complete Quest'}</span>
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-card overflow-hidden">
+                <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+                    <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <ClipboardList size={16} />
+                        Active Backlog
+                    </h4>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">{quests.filter(q => !q.completed).length} Tasks remaining</span>
                 </div>
 
-                {activeQuestId && (
-                    <div className="mb-8 p-8 bg-slate-900/60 border-2 border-poke-accent/30 rounded-3xl flex flex-col md:flex-row items-center justify-between animate-pulse-subtle gap-6">
-                        <div className="flex-1">
-                            <div className="text-poke-accent text-xs font-bold uppercase tracking-[0.2em] mb-2">Quest in Progress</div>
-                            <div className="text-3xl font-bold text-white tracking-tight">
-                                {quests.find(q => q.id === activeQuestId)?.title}
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-8">
-                            <div className="fliqlo-container">
-                                <div className="fliqlo-group">
-                                    <div className="fliqlo-card">
-                                        {Math.floor(elapsedTime / 3600).toString().padStart(2, '0')}
-                                    </div>
-                                    <span className="fliqlo-label">Hours</span>
-                                </div>
-                                <div className="text-2xl font-bold text-slate-500 mb-6">:</div>
-                                <div className="fliqlo-group">
-                                    <div className="fliqlo-card">
-                                        {Math.floor((elapsedTime % 3600) / 60).toString().padStart(2, '0')}
-                                    </div>
-                                    <span className="fliqlo-label">Minutes</span>
-                                </div>
-                                <div className="text-2xl font-bold text-slate-500 mb-6">:</div>
-                                <div className="fliqlo-group">
-                                    <div className="fliqlo-card text-poke-yellow">
-                                        {(elapsedTime % 60).toString().padStart(2, '0')}
-                                    </div>
-                                    <span className="fliqlo-label">Seconds</span>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => handleFinishQuest(activeQuestId)}
-                                disabled={finishing}
-                                className={`${finishing ? 'bg-slate-600 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'} text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg hover:shadow-green-500/30 flex items-center gap-2`}
-                            >
-                                <span className="text-xl">{finishing ? '⏳' : '🏁'}</span>
-                                {finishing ? 'Finishing...' : 'Finish Quest'}
-                            </button>
-                        </div>
-                    </div>
-                )}
-
                 {loading ? (
-                    <div className="text-center py-10 text-slate-400">Loading quests...</div>
+                    <div className="p-12 text-center text-slate-400 font-medium">Fetching your adventure logs...</div>
                 ) : (
-                    <div className="space-y-4">
-                        {quests.length === 0 && <div className="text-center py-10 text-slate-500 italic">No quests found. Start your adventure!</div>}
+                    <div className="divide-y divide-slate-50">
+                        {quests.length === 0 && (
+                            <div className="p-16 text-center">
+                                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Plus size={32} className="text-slate-300" />
+                                </div>
+                                <p className="text-slate-400 font-medium italic">No quests available. Start by posting a new challenge.</p>
+                            </div>
+                        )}
                         {quests.map(quest => (
-                            <div key={quest.id} className={`p-4 rounded-xl border flex items-center justify-between group transition-all ${quest.completed ? 'bg-slate-900/50 border-slate-800 opacity-50' : 'bg-slate-700/50 border-slate-600 hover:border-poke-yellow'} ${activeQuestId === quest.id ? 'ring-2 ring-poke-accent' : ''}`}>
-                                <div className="flex items-center space-x-4">
-                                    <div
-                                        className={`w-10 h-10 rounded-xl border flex items-center justify-center ${quest.completed ? 'bg-green-500/20 border-green-500 text-green-500' : 'bg-slate-800 border-slate-700'}`}
-                                    >
-                                        {quest.completed ? "✓" : "⚔️"}
+                            <div
+                                key={quest.id}
+                                className={`p-5 flex items-center justify-between group transition-all hover:bg-slate-50/50 ${quest.completed ? 'opacity-60 grayscale bg-slate-50/20' : ''} ${activeQuestId === quest.id ? 'bg-indigo-50/30 border-l-4 border-l-indigo-600' : ''}`}
+                            >
+                                <div className="flex items-center space-x-5">
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${quest.completed ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-white border border-slate-200 shadow-sm text-slate-400 group-hover:border-indigo-200 group-hover:text-indigo-600'}`}>
+                                        {quest.completed ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                                     </div>
                                     <div>
-                                        <div className={`font-medium ${quest.completed ? 'line-through text-slate-500' : 'text-white'}`}>{quest.title}</div>
-                                        <div className="text-xs text-slate-400 flex space-x-2 mt-1">
-                                            <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold ${getDifficultyColor(quest.difficulty)}`}>
+                                        <div className={`font-bold transition-all ${quest.completed ? 'line-through text-slate-400' : 'text-slate-800'}`}>
+                                            {quest.title}
+                                        </div>
+                                        <div className="flex items-center gap-3 mt-1.5">
+                                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border transition-colors ${getDifficultyStyles(quest.difficulty)}`}>
                                                 {quest.difficulty}
                                             </span>
-                                            {quest.completed && <span className="text-poke-yellow">+{quest.earnedXp || 0} XP gained</span>}
+                                            {quest.completed && (
+                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                                    +{quest.earnedXp || 0} XP EARNED
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center space-x-3">
+
+                                <div className="flex items-center gap-2">
                                     {!quest.completed && activeQuestId !== quest.id && (
                                         <button
                                             onClick={() => handleStartQuest(quest.id)}
                                             disabled={!!activeQuestId}
-                                            className={`px-4 py-2 rounded-lg font-bold transition-all ${activeQuestId ? 'bg-slate-700 text-slate-500 cursor-not-allowed' : 'bg-poke-accent/10 border border-poke-accent/30 text-poke-accent hover:bg-poke-accent hover:text-slate-900'}`}
+                                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${activeQuestId ? 'text-slate-300 cursor-not-allowed' : 'bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white shadow-sm'}`}
                                         >
-                                            Start Task
+                                            <Play size={14} fill="currentColor" />
+                                            Start Mission
                                         </button>
                                     )}
-                                    <button onClick={() => handleDelete(quest.id)} className="text-slate-400 hover:text-red-400 p-2">🗑️</button>
+                                    <button
+                                        onClick={() => handleDelete(quest.id)}
+                                        className="p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
                                 </div>
                             </div>
                         ))}
@@ -235,46 +281,61 @@ export function Tasks() {
 
             {/* New Quest Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-800 border border-slate-700 p-8 rounded-2xl w-full max-w-md shadow-2xl">
-                        <h3 className="text-2xl font-bold mb-6 text-poke-yellow">Post New Quest</h3>
-                        <form onSubmit={handleAddQuest} className="space-y-6">
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-in fade-in duration-300">
+                    <div className="bg-white border border-slate-200 p-10 rounded-[2.5rem] w-full max-w-xl shadow-2xl animate-in zoom-in duration-300">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-inner">
+                                <Plus size={28} />
+                            </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Quest Title</label>
+                                <h3 className="text-2xl font-black text-slate-900 leading-tight">Post New Quest</h3>
+                                <p className="text-slate-500 font-medium">Define a new challenge for your training journey.</p>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleAddQuest} className="space-y-8">
+                            <div className="space-y-3">
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Mission Title</label>
                                 <input
                                     required
                                     type="text"
                                     value={newTitle}
                                     onChange={(e) => setNewTitle(e.target.value)}
                                     placeholder="Enter quest description..."
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-poke-accent"
+                                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 text-slate-900 font-semibold focus:outline-none focus:border-indigo-600 transition-all placeholder:text-slate-300"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Difficulty</label>
-                                <select
-                                    value={newDifficulty}
-                                    onChange={(e) => setNewDifficulty(e.target.value)}
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-poke-accent"
-                                >
-                                    <option>Easy</option>
-                                    <option>Medium</option>
-                                    <option>Hard</option>
-                                </select>
+
+                            <div className="space-y-3">
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Challenge Rating</label>
+                                <div className="grid grid-cols-3 gap-4">
+                                    {['Easy', 'Medium', 'Hard'].map(d => (
+                                        <button
+                                            key={d}
+                                            type="button"
+                                            onClick={() => setNewDifficulty(d)}
+                                            className={`py-4 rounded-2xl font-bold text-sm transition-all border-2 ${newDifficulty === d ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
+                                        >
+                                            {d}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex space-x-4 pt-4">
+
+                            <div className="flex gap-4 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="flex-1 px-6 py-3 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-700 transition-colors"
+                                    className="flex-1 px-8 py-4 rounded-2xl border-2 border-slate-100 text-slate-400 font-bold hover:bg-slate-50 transition-all"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-6 py-3 rounded-xl bg-poke-accent text-slate-900 font-bold hover:bg-cyan-600 transition-colors"
+                                    className="flex-1 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-2"
                                 >
-                                    Create Quest
+                                    Initialize Quest
+                                    <ArrowRight size={18} />
                                 </button>
                             </div>
                         </form>
@@ -285,12 +346,11 @@ export function Tasks() {
     )
 }
 
-function getDifficultyColor(diff: string) {
+function getDifficultyStyles(diff: string) {
     switch (diff) {
-        case 'Easy': return 'bg-green-900 text-green-300';
-        case 'Medium': return 'bg-yellow-900 text-yellow-300';
-        case 'Hard': return 'bg-red-900 text-red-300';
-        default: return 'bg-slate-700 text-slate-300';
+        case 'Easy': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+        case 'Medium': return 'bg-amber-50 text-amber-600 border-amber-100';
+        case 'Hard': return 'bg-rose-50 text-rose-600 border-rose-100';
+        default: return 'bg-slate-50 text-slate-500 border-slate-100';
     }
 }
-

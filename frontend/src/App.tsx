@@ -11,7 +11,7 @@ import { Profile } from './views/Profile'
 
 export default function App() {
   const [currentView, setCurrentView] = useState('dashboard')
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isSidebarOpen, setIsOpen] = useState(true)
   const [registered, setRegistered] = useState(false)
   const [userRole, setUserRole] = useState<string | undefined>()
 
@@ -47,13 +47,13 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white font-sans flex">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex">
       {/* Sidebar Navigation */}
       <Sidebar
         currentView={currentView}
         setCurrentView={setCurrentView}
         isOpen={isSidebarOpen}
-        setIsOpen={setIsSidebarOpen}
+        setIsOpen={setIsOpen}
         userRole={userRole}
         onLogout={() => {
           localStorage.removeItem('authHeader');
@@ -67,7 +67,7 @@ export default function App() {
       <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
         <Header title={currentView.charAt(0).toUpperCase() + currentView.slice(1)} />
 
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-6xl py-8">
           {renderView()}
         </div>
       </main>

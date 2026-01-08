@@ -1,29 +1,66 @@
-# Poke-Work
+# Poke-Work: Professional Productivity Ecosystem
 
-Welcome to your gamified productivity tracker! This project is designed to help you learn Java, JDBC, and architecture fundamentals.
+Poke-Work is a premium, gamified productivity hub designed for senior software engineers to track their career trajectory, manage focus sessions, and visualize technical evolution.
 
-## 📂 Project Structure
-Values strict separation of concerns:
-- **`src/main/java/com/pokework/`**: Source code
-  - **`ui/`**: User Interface (Console menus)
-  - **`service/`**: Business logic (XP calculation, rules)
-  - **`dao/`**: Database interactions (SQL)
-  - **`model/`**: Simple data classes
-  - **`util/`**: Helpers (Database connection)
+![Professional UI](https://img.shields.io/badge/UI-Professional_Light_Mode-indigo)
+![Architecture](https://img.shields.io/badge/Architecture-Spring_Boot_%2B_React-blue)
+![Iconography](https://img.shields.io/badge/Icons-Lucide_React-emerald)
 
-## 🗄️ Database Setup
-1. Uses **SQLite**.
-2. A `schema.sql` file is included in this folder.
-3. You can initialize your database by reading this file or running the SQL commands inside it.
+## 🚀 Key Features
 
-## 📘 How to Start
-1.  **Read the Architecture Blueprint**: Check `architecture_blueprint.md` in the artifacts folder (or ask me to show it to you) to understand the plan.
-2.  **Start Coding**:
-    *   Begin with **Model** classes (`WorkSession.java`, `Pokemon.java`).
-    *   Then build the **Database** connection (`Database.java`).
-    *   Then implement **DAOs** to save data.
-    *   Then add **Services** to process logic.
-    *   Finally, build the **Console Menu** to tie it all together.
+### 🛠️ Strategic Task Management
+- **Quest Board**: Organize daily tasks as "Quests" with varying difficulty ratings (Easy, Medium, Hard).
+- **Goal Association**: Directly link quests to long-term professional objectives (e.g., "Master TypeScript" or "System Design").
+- **Live Focus Timer**: Integrated high-performance timer for tracking session duration with real-time XP rewards.
 
-## 📝 Usage
-This is currently a skeleton project. You will be writing the implementation code!
+### 📈 Career Evolution
+- **Evolutionary Stages**: Your profile evolves based on accumulated XP and achievements.
+- **Dynamic Stats**: Track your growth through level-ups, work duration, and technical milestones.
+- **Accolades & Merit**: 15+ unique, dynamic achievements with real-time progress tracking and professional badge visualizations.
+
+### 🛡️ Administrative Protocols
+- **Identity Settings**: Manage your professional alias, roles, and avatar resource links.
+- **System Control**: Centralized administrative dashboard for user record management and system monitoring.
+
+## 💻 Tech Stack
+
+### Backend
+- **Java 17+**
+- **Spring Boot 3.x**
+- **Spring Data JPA** (Hibernate)
+- **H2 Database** (Persistence)
+
+### Frontend
+- **React 18** (Vite)
+- **TypeScript**
+- **Tailwind CSS** (Professional Design System)
+- **Lucide React** (Iconography)
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- JDK 17 or higher
+- Node.js 18 or higher
+- Maven 3.8+
+
+### Setup Instructions
+
+1. **Initialize Backend**:
+   ```bash
+   mvn spring-boot:run
+   ```
+   The API will be available at `http://localhost:8080`.
+
+2. **Initialize Frontend**:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   The workspace will be accessible at `http://localhost:5173`.
+
+## 🎨 Design Philosophy
+Poke-Work prioritizes a **professional, high-performance aesthetic**. Eschewing traditional gamified clutter, the interface utilizes a clean light-mode palette, sophisticated glassmorphism, and subtle micro-animations to create a welcoming yet motivating environment for the modern engineer.
+
+---
+*Developed with focus on senior-level engineering standards.*

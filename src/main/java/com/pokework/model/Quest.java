@@ -27,6 +27,10 @@ public class Quest {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goal_id")
+    private Goal goal;
+
     public Quest() {
     }
 
@@ -83,5 +87,13 @@ public class Quest {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Goal getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Goal goal) {
+        this.goal = goal;
     }
 }

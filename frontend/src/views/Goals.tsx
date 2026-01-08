@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api';
+import {
+    Target,
+    Plus,
+    Trash2,
+    TrendingUp,
+    Shield,
+    ChevronRight,
+    Search
+} from 'lucide-react';
 
 interface Goal {
     id: number;
@@ -19,7 +28,7 @@ export function Goals() {
     const [title, setTitle] = useState('');
     const [target, setTarget] = useState(100);
     const [unit, setUnit] = useState('hours');
-    const [color, setColor] = useState('bg-blue-500');
+    const [color, setColor] = useState('bg-indigo-600');
 
     useEffect(() => {
         fetchGoals();
@@ -59,119 +68,170 @@ export function Goals() {
     };
 
     return (
-        <div className="p-8">
-            <h2 className="text-3xl font-bold mb-8 text-white tracking-tight">Training Goals</h2>
+        <div className="space-y-8 pb-12">
+            <div className="flex justify-between items-center text-slate-900">
+                <div>
+                    <h2 className="text-3xl font-extrabold tracking-tight">Focus Objectives</h2>
+                    <p className="text-slate-500 font-medium">Define and track your long-term skill development.</p>
+                </div>
+            </div>
 
             {loading ? (
-                <div className="text-slate-400">Loading goals...</div>
+                <div className="p-12 text-center text-slate-400 font-medium animate-pulse">Retrieving training objectives...</div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {goals.map(goal => (
-                        <div key={goal.id} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:border-slate-500 transition-all shadow-lg group">
-                            <div className="flex justify-between items-end mb-4">
-                                <div>
-                                    <h3 className="text-lg font-bold text-white">{goal.title}</h3>
-                                    <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mt-1">Target: {goal.targetValue} {goal.unit}</div>
+                        <div key={goal.id} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-card hover:shadow-lg transition-all group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -translate-y-16 translate-x-16 -z-0 opacity-50 transition-transform group-hover:scale-110" />
+
+                            <div className="relative z-1">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg ${goal.color.replace('bg-', 'bg-opacity-90 bg-')}`}>
+                                            <Target size={28} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-slate-900">{goal.title}</h3>
+                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                                                Objective: {goal.targetValue} {goal.unit}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDelete(goal.id)}
+                                        className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
                                 </div>
-                                <span className="text-sm font-mono text-slate-300">
-                                    {goal.currentValue} / {goal.targetValue}
-                                </span>
-                            </div>
 
-                            <div className="w-full h-4 bg-slate-900 rounded-full overflow-hidden border border-slate-700/50">
-                                <div
-                                    className={`h-full ${goal.color} transition-all duration-1000 ease-out`}
-                                    style={{ width: `${Math.min(100, (goal.currentValue / goal.targetValue) * 100)}%` }}
-                                ></div>
-                            </div>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-end">
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-3xl font-black text-slate-900">{goal.currentValue}</span>
+                                            <span className="text-slate-400 font-bold text-sm uppercase">/ {goal.targetValue} {goal.unit}</span>
+                                        </div>
+                                        <div className="text-xs font-black text-slate-900">
+                                            {Math.floor((goal.currentValue / goal.targetValue) * 100)}%
+                                        </div>
+                                    </div>
 
-                            <div className="mt-6 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                    onClick={() => handleDelete(goal.id)}
-                                    className="text-xs text-red-400 hover:text-red-300 font-bold"
-                                >
-                                    Delete
-                                </button>
-                                <div className="text-[10px] text-slate-500 font-bold uppercase">Progress: {Math.floor((goal.currentValue / goal.targetValue) * 100)}%</div>
+                                    <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full ${goal.color} transition-all duration-1000 ease-out rounded-full shadow-inner`}
+                                            style={{ width: `${Math.min(100, (goal.currentValue / goal.targetValue) * 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex -space-x-2">
+                                            {[1, 2, 3].map(i => (
+                                                <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-400">
+                                                    ST
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Contributor streak</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-indigo-600 font-bold text-xs group-hover:gap-2 transition-all">
+                                        Details <ChevronRight size={14} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}
 
-                    <div
+                    <button
                         onClick={() => setShowModal(true)}
-                        className="bg-slate-800/30 p-6 rounded-2xl border border-dashed border-slate-600 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-800/50 hover:border-poke-accent transition-all group h-40"
+                        className="bg-slate-50/50 p-8 rounded-[2rem] border-4 border-dashed border-slate-100 flex flex-col items-center justify-center cursor-pointer hover:bg-white hover:border-indigo-600 hover:text-indigo-600 transition-all group h-full min-h-[280px]"
                     >
-                        <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-2xl mb-3 group-hover:bg-poke-accent group-hover:text-slate-900 transition-all">+</div>
-                        <span className="text-slate-400 group-hover:text-white font-bold uppercase text-xs tracking-widest">Set New Goal</span>
-                    </div>
+                        <div className="w-16 h-16 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-slate-300 mb-4 group-hover:scale-110 group-hover:border-indigo-600 group-hover:text-indigo-600 transition-all shadow-sm">
+                            <Plus size={32} />
+                        </div>
+                        <span className="text-slate-400 group-hover:text-indigo-600 font-black uppercase text-xs tracking-[0.2em]">Initialize New Objective</span>
+                    </button>
                 </div>
             )}
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-800 border border-slate-700 p-8 rounded-3xl w-full max-w-md shadow-2xl animate-in fade-in zoom-in duration-200">
-                        <h3 className="text-2xl font-bold mb-6 text-poke-accent">New Training Goal</h3>
-                        <form onSubmit={handleAddGoal} className="space-y-4">
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-in fade-in duration-300">
+                    <div className="bg-white border border-slate-200 p-10 rounded-[2.5rem] w-full max-w-xl shadow-2xl animate-in zoom-in duration-300">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-inner">
+                                <Target size={28} />
+                            </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Goal Title</label>
+                                <h3 className="text-2xl font-black text-slate-900 leading-tight">Define Objective</h3>
+                                <p className="text-slate-500 font-medium">Establish a new performance metric to track.</p>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleAddGoal} className="space-y-8">
+                            <div className="space-y-3">
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Objective Title</label>
                                 <input
                                     required
                                     type="text"
                                     value={title}
                                     onChange={e => setTitle(e.target.value)}
-                                    placeholder="e.g., Master React Hooks"
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-poke-accent transition-colors"
+                                    placeholder="e.g., Master Advanced TypeScript"
+                                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 text-slate-900 font-semibold focus:outline-none focus:border-indigo-600 transition-all"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Target Value</label>
+
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-3">
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Target Threshold</label>
                                     <input
                                         required
                                         type="number"
                                         value={target}
                                         onChange={e => setTarget(Number(e.target.value))}
-                                        className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-poke-accent transition-colors"
+                                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 text-slate-900 font-bold focus:outline-none focus:border-indigo-600 transition-all"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Unit</label>
+                                <div className="space-y-3">
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Metric Unit</label>
                                     <input
                                         required
                                         type="text"
                                         value={unit}
                                         onChange={e => setUnit(e.target.value)}
-                                        placeholder="hours/sessions"
-                                        className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-poke-accent transition-colors"
+                                        placeholder="hours/tasks"
+                                        className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 text-slate-900 font-semibold focus:outline-none focus:border-indigo-600 transition-all"
                                     />
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Color Theme</label>
-                                <div className="flex gap-3">
-                                    {['bg-blue-500', 'bg-orange-500', 'bg-purple-500', 'bg-green-500', 'bg-pink-500'].map(c => (
+
+                            <div className="space-y-3">
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Visual Marker</label>
+                                <div className="flex gap-4">
+                                    {['bg-indigo-600', 'bg-emerald-600', 'bg-rose-600', 'bg-amber-500', 'bg-violet-600'].map(c => (
                                         <div
                                             key={c}
                                             onClick={() => setColor(c)}
-                                            className={`w-8 h-8 rounded-full cursor-pointer transition-all ${c} ${color === c ? 'ring-4 ring-white' : 'hover:scale-110'}`}
+                                            className={`w-10 h-10 rounded-xl cursor-pointer transition-all ${c} ${color === c ? 'ring-4 ring-indigo-100 scale-110 shadow-lg' : 'hover:scale-110 opacity-70 hover:opacity-100'}`}
                                         />
                                     ))}
                                 </div>
                             </div>
-                            <div className="flex gap-4 mt-8">
+
+                            <div className="flex gap-4 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="flex-1 py-3 rounded-xl border border-slate-600 text-slate-400 font-bold hover:bg-slate-700 transition-all"
+                                    className="flex-1 px-8 py-4 rounded-2xl border-2 border-slate-100 text-slate-400 font-bold hover:bg-slate-50 transition-all"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 py-3 rounded-xl bg-poke-accent text-slate-900 font-bold hover:bg-cyan-400 transition-all shadow-lg shadow-poke-accent/20"
+                                    className="flex-1 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100"
                                 >
-                                    Save Goal
+                                    Save Objective
                                 </button>
                             </div>
                         </form>

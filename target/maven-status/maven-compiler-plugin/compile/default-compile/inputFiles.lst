@@ -1,4 +1,5 @@
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/config/DataInitializer.java
+/Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/dto/AchievementResponse.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/repository/PokemonRepository.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/service/QuestService.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/dto/DashboardResponse.java
@@ -12,6 +13,7 @@
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/controller/GoalController.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/service/WorkService.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/dto/WorkRequest.java
+/Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/controller/AchievementController.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/model/Quest.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/repository/QuestRepository.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/controller/DashboardController.java
@@ -26,4 +28,5 @@
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/service/GoalService.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/model/WorkSession.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/repository/UserRepository.java
+/Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/service/AchievementService.java
 /Users/iremkarahan/Desktop/Poke-Work/src/main/java/com/pokework/service/AuthService.java
