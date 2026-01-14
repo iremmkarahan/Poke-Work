@@ -5,7 +5,6 @@ import {
     TrendingUp,
     Clock,
     RefreshCcw,
-    CheckCircle2,
     ShieldCheck,
     Star,
     User
@@ -122,10 +121,6 @@ export function Dashboard({ onDataLoaded }: DashboardProps) {
                 </div>
 
                 <div className="flex gap-4">
-                    <div className="text-center px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Rank</div>
-                        <div className="text-xl font-bold text-indigo-600">Elite</div>
-                    </div>
                     <div className="text-center px-6 py-3 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-200">
                         <div className="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-1">Status</div>
                         <div className="text-xl font-bold text-white">Active</div>
@@ -169,9 +164,9 @@ export function Dashboard({ onDataLoaded }: DashboardProps) {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-slate-500">
+            <div className="grid grid-cols-1 gap-8 text-slate-500">
                 {/* Visual Chart Placeholder */}
-                <div className="lg:col-span-2 bg-white rounded-3xl p-8 border border-slate-100 shadow-card h-80 flex flex-col">
+                <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-card h-80 flex flex-col">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="font-bold text-slate-900 flex items-center gap-2">
                             <Clock size={18} className="text-indigo-600" />
@@ -190,19 +185,6 @@ export function Dashboard({ onDataLoaded }: DashboardProps) {
                             <Zap size={32} className="mx-auto text-indigo-200 mb-3" />
                             <p className="text-xs font-semibold text-slate-400 max-w-[200px]">Data visualization of your productivity will appear here.</p>
                         </div>
-                    </div>
-                </div>
-
-                {/* Recent Activity */}
-                <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-card h-80 flex flex-col">
-                    <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <Zap size={18} className="text-amber-500" />
-                        Log feed
-                    </h3>
-                    <div className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                        <ActivityItem icon={<CheckCircle2 size={14} />} text="Quest synchronization complete" time="2m ago" />
-                        <ActivityItem icon={<Star size={14} />} text="Daily login bonus rewarded" time="1h ago" />
-                        <ActivityItem icon={<RefreshCcw size={14} />} text="Status updated to Focusing" time="3h ago" />
                     </div>
                 </div>
             </div>
@@ -258,14 +240,3 @@ function getStatusBorder(status: string) {
     }
 }
 
-function ActivityItem({ icon, text, time }: any) {
-    return (
-        <div className="flex items-start space-x-3 p-3 bg-slate-50/50 rounded-2xl border border-slate-100/50 group hover:bg-white hover:border-slate-200 transition-all">
-            <div className="mt-0.5 text-indigo-500">{icon}</div>
-            <div className="flex-1">
-                <div className="text-xs font-bold text-slate-700 group-hover:text-slate-900">{text}</div>
-                <div className="text-[10px] text-slate-400 font-medium mt-0.5">{time}</div>
-            </div>
-        </div>
-    )
-}
