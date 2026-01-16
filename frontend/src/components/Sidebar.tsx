@@ -7,7 +7,8 @@ import {
     Settings,
     LogOut,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Sparkles
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -33,11 +34,11 @@ export function Sidebar({ currentView, setCurrentView, isOpen, setIsOpen, onLogo
         <aside className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 transition-all duration-300 z-50 shadow-soft ${isOpen ? 'w-64' : 'w-20'}`}>
             <div className="p-6 flex items-center justify-between">
                 {isOpen && (
-                    <div className="flex items-center space-x-3 font-bold text-xl tracking-tight text-slate-900">
-                        <div className="w-8 h-8 bg-indigo-600 rounded-lg shadow-lg flex items-center justify-center">
-                            <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                    <div className="flex items-center space-x-3 font-black text-xl tracking-tighter text-slate-900 group cursor-default">
+                        <div className="w-9 h-9 bg-indigo-600 rounded-xl shadow-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+                            <Sparkles className="text-white w-5 h-5" />
                         </div>
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-800">Poke-Work</span>
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-900">Poke-Work</span>
                     </div>
                 )}
                 <button
@@ -81,7 +82,7 @@ export function Sidebar({ currentView, setCurrentView, isOpen, setIsOpen, onLogo
                         <div className="mt-4 px-3">
                             <div className="h-px bg-slate-100 w-full mb-4" />
                             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest opacity-60">
-                                Portfolio Version 1.0.0
+                                Achievement Hub v2.0.0
                             </div>
                         </div>
                     )}

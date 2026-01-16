@@ -232,22 +232,22 @@ export function Tasks() {
                         {quests.map(quest => (
                             <div
                                 key={quest.id}
-                                className={`p-5 flex items-center justify-between group transition-all hover:bg-slate-50/50 ${quest.completed ? 'opacity-60 grayscale bg-slate-50/20' : ''} ${activeQuestId === quest.id ? 'bg-indigo-50/30 border-l-4 border-l-indigo-600' : ''}`}
+                                className={`p-5 flex items-center justify-between group transition-all hover:bg-slate-50/80 ${quest.completed ? 'bg-slate-50/40 opacity-50' : 'bg-white'} ${activeQuestId === quest.id ? 'bg-indigo-50/30 border-l-4 border-l-indigo-600' : ''}`}
                             >
                                 <div className="flex items-center space-x-5">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${quest.completed ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-white border border-slate-200 shadow-sm text-slate-400 group-hover:border-indigo-200 group-hover:text-indigo-600'}`}>
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${quest.completed ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-white border border-slate-200 shadow-sm text-slate-400 group-hover:border-indigo-200 group-hover:text-indigo-600'}`}>
                                         {quest.completed ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                                     </div>
                                     <div>
-                                        <div className={`font-bold transition-all ${quest.completed ? 'line-through text-slate-400' : 'text-slate-800'}`}>
-                                            {quest.title}
+                                        <div className={`font-bold transition-all ${quest.completed ? 'text-slate-500 line-through' : 'text-slate-800'}`}>
+                                            {quest.title} {quest.completed && <span className="ml-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest no-underline inline-block">(Completed)</span>}
                                         </div>
                                         <div className="flex items-center gap-3 mt-1.5">
                                             <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border transition-colors ${getDifficultyStyles(quest.difficulty)}`}>
                                                 {quest.difficulty}
                                             </span>
                                             {quest.completed && (
-                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
                                                     +{quest.earnedXp || 0} XP EARNED
                                                 </span>
                                             )}
