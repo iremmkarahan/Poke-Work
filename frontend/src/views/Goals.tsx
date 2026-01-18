@@ -4,10 +4,7 @@ import {
     Target,
     Plus,
     Trash2,
-    TrendingUp,
-    Shield,
-    ChevronRight,
-    Search
+    ChevronRight
 } from 'lucide-react';
 
 interface Goal {
